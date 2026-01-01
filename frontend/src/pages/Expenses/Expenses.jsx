@@ -114,16 +114,25 @@ export default function Expenses() {
                   className="flex justify-between items-center bg-gray-50 p-2 rounded-lg text-sm"
                 >
                   <div>
-                    <p className="font-medium text-gray-800">
-                      {expense.title}
-                    </p>
+                    <p className="font-medium text-gray-800">{expense.title}</p>
                     <p className="text-xs text-gray-500 capitalize">
                       {expense.category}
                     </p>
                   </div>
-                  <p className="font-semibold text-gray-800">
-                    ₹{expense.amount}
-                  </p>
+
+                  <div className="flex items-center gap-2">
+                    <p className="font-semibold text-gray-800">
+                      ₹{expense.amount}
+                    </p>
+                    <button
+                      onClick={() =>
+                        setExpenses(expenses.filter((e) => e.id !== expense.id))
+                      }
+                      className="text-red-500 text-xs hover:underline"
+                    >
+                      Delete
+                    </button>
+                  </div>
                 </li>
               ))}
             </ul>

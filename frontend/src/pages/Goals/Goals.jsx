@@ -94,10 +94,19 @@ export default function Goals() {
                   key={goal.id}
                   className="flex justify-between items-center text-sm bg-gray-50 p-2 rounded-lg"
                 >
-                  <span>{goal.title}</span>
-                  <span className="text-xs text-gray-500 capitalize">
-                    {goal.type}
-                  </span>
+                  <div>
+                    <p className="text-gray-800">{goal.title}</p>
+                    <p className="text-xs text-gray-500 capitalize">{goal.type}</p>
+                  </div>
+
+                  <button
+                    onClick={() =>
+                      setGoals(goals.filter((g) => g.id !== goal.id))
+                    }
+                    className="text-red-500 text-xs hover:underline"
+                  >
+                    Delete
+                  </button>
                 </li>
               ))}
             </ul>

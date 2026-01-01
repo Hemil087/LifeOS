@@ -6,24 +6,43 @@ export default function Expenses() {
   const [amount, setAmount] = useState("");
   const [category, setCategory] = useState("food");
   const [expenses, setExpenses] = useState([]);
+  const [editingId, setEditingId] = useState(null);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+const handleSubmit = (e) => {
+  e.preventDefault();
 
-    if (!title.trim() || !amount) return;
+  if (!title.trim() || !amount) return;
 
-    const newExpense = {
-      id: Date.now(),
-      title,
-      amount: Number(amount),
-      category,
-    };
+  if (editingId) {
+    setExpenses(
+      expenses.map((expense) =>
+        expense.id === editingId
+          ? {
+              ...expense,
+              title,
+              amount: Number(amount),
+              category,
+            }
+          : expense
+      )
+    );
+    setEditingId(null);
+  } else {
+    setExpenses([
+      ...expenses,
+      {
+        id: Date.now(),
+        title,
+        amount: Number(amount),
+        category,
+      },
+    ]);
+  }
 
-    setExpenses([...expenses, newExpense]);
-    setTitle("");
-    setAmount("");
-    setCategory("food");
-  };
+  setTitle("");
+  setAmount("");
+  setCategory("food");
+};
 
   return (
     <div className="min-h-screen bg-gray-100 p-4 pb-20">
@@ -90,13 +109,9 @@ export default function Expenses() {
             </div>
 
             {/* Submit */}
-            <button
-              type="submit"
-              className="w-full bg-blue-600 text-white py-2 rounded-lg text-sm font-medium hover:bg-blue-700"
-            >
-              Add Expense
+            <button type="submit" className="w-full bg-blue-600 text-white py-2 rounded-lg text-sm font-medium hover:bg-blue-700">
+              {editingId ? "Update Expense" : "Add Expense"}
             </button>
-
           </form>
         </Card>
 
@@ -119,14 +134,28 @@ export default function Expenses() {
                       {expense.category}
                     </p>
                   </div>
-
                   <div className="flex items-center gap-2">
                     <p className="font-semibold text-gray-800">
                       ₹{expense.amount}
                     </p>
+
+                    <button
+                      onClick={() => {
+                        setTitle(expense.title);
+                        setAmount(expense.amount);
+                        setCategory(expense.category);
+                        setEditingId(expense.id);
+                      }}
+                      className="text-blue-500 text-xs hover:underline"
+                    >
+                      Edit
+                    </button>
+
                     <button
                       onClick={() =>
-                        setExpenses(expenses.filter((e) => e.id !== expense.id))
+                        setExpenses(
+                          expenses.filter((e) => e.id !== expense.id)
+                        )
                       }
                       className="text-red-500 text-xs hover:underline"
                     >

@@ -5,22 +5,34 @@ export default function Goals() {
   const [title, setTitle] = useState("");
   const [type, setType] = useState("daily");
   const [goals, setGoals] = useState([]);
+  const [editingId, setEditingId] = useState(null);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
 
-    if (!title.trim()) return;
+const handleSubmit = (e) => {
+  e.preventDefault();
 
-    const newGoal = {
-      id: Date.now(),
-      title,
-      type,
-    };
+  if (!title.trim()) return;
 
-    setGoals([...goals, newGoal]);
-    setTitle("");
-    setType("daily");
-  };
+  if (editingId) {
+    setGoals(
+      goals.map((goal) =>
+        goal.id === editingId
+          ? { ...goal, title, type }
+          : goal
+      )
+    );
+    setEditingId(null);
+  } else {
+    setGoals([
+      ...goals,
+      { id: Date.now(), title, type },
+    ]);
+  }
+
+  setTitle("");
+  setType("daily");
+};
+
 
   return (
     <div className="min-h-screen bg-gray-100 p-4 pb-20">
@@ -71,13 +83,9 @@ export default function Goals() {
             </div>
 
             {/* Submit Button */}
-            <button
-              type="submit"
-              className="w-full bg-blue-600 text-white py-2 rounded-lg text-sm font-medium hover:bg-blue-700"
-            >
-              Add Goal
+            <button type="submit" className="w-full bg-blue-600 text-white py-2 rounded-lg text-sm font-medium hover:bg-blue-700">
+              {editingId ? "Update Goal" : "Add Goal"}
             </button>
-
           </form>
         </Card>
 
@@ -99,14 +107,27 @@ export default function Goals() {
                     <p className="text-xs text-gray-500 capitalize">{goal.type}</p>
                   </div>
 
-                  <button
-                    onClick={() =>
-                      setGoals(goals.filter((g) => g.id !== goal.id))
-                    }
-                    className="text-red-500 text-xs hover:underline"
-                  >
-                    Delete
-                  </button>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => {
+                        setTitle(goal.title);
+                        setType(goal.type);
+                        setEditingId(goal.id);
+                      }}
+                      className="text-blue-500 text-xs hover:underline"
+                    >
+                      Edit
+                    </button>
+
+                    <button
+                      onClick={() =>
+                        setGoals(goals.filter((g) => g.id !== goal.id))
+                      }
+                      className="text-red-500 text-xs hover:underline"
+                    >
+                      Delete
+                    </button>
+                  </div>
                 </li>
               ))}
             </ul>

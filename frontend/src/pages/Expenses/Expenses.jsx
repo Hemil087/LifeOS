@@ -1,3 +1,5 @@
+import Card from "../../components/Card";
+
 export default function Expenses() {
   return (
     <div className="min-h-screen bg-gray-100 p-4">
@@ -13,15 +15,15 @@ export default function Expenses() {
           </p>
         </div>
 
-        {/* Placeholder content */}
-        <div className="bg-white rounded-xl shadow p-4">
+        {/* Placeholder Card */}
+        <Card title="Expense Records">
           <p className="text-sm text-gray-600">
             No expense records yet.
           </p>
           <p className="text-xs text-gray-400 mt-1">
             Your expense history will appear here.
           </p>
-        </div>
+        </Card>
 
       </div>
     </div>

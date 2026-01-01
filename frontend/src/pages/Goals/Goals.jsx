@@ -1,5 +1,7 @@
+import Card from "../../components/Card";
+
 export default function Goals() {
-    return (
+  return (
     <div className="min-h-screen bg-gray-100 p-4">
       <div className="max-w-7xl mx-auto space-y-6">
 
@@ -13,17 +15,17 @@ export default function Goals() {
           </p>
         </div>
 
-        {/* Placeholder content */}
-        <div className="bg-white rounded-xl shadow p-4">
+        {/* Placeholder Card */}
+        <Card title="Your Goals">
           <p className="text-sm text-gray-600">
             No goals added yet.
           </p>
           <p className="text-xs text-gray-400 mt-1">
             You’ll be able to add and manage goals here.
           </p>
-        </div>
+        </Card>
 
       </div>
     </div>
-    );
+  );
 }

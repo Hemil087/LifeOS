@@ -2,7 +2,7 @@ import Card from "../../components/Card";
 
 export default function Goals() {
   return (
-    <div className="min-h-screen bg-gray-100 p-4">
+    <div className="min-h-screen bg-gray-100 p-4 pb-20">
       <div className="max-w-7xl mx-auto space-y-6">
 
         {/* Header */}

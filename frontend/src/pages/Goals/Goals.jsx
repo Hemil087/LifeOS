@@ -1,9 +1,31 @@
 import { useState } from "react";
 import Card from "../../components/Card";
 import { useAppContext } from "../../context/AppContext";
+import { useEffect } from "react";
 
 
 export default function Goals() {
+    useEffect(() => {
+      const today = new Date().toDateString();
+    
+      setGoals((prev) =>
+        prev.map((g) => {
+          if (g.type !== "daily") return g;
+    
+          if (
+            g.lastDoneAt &&
+            new Date(g.lastDoneAt).toDateString() !== today
+          ) {
+            return {
+              ...g,
+              progress: 0,
+              completed: false,
+            };
+          }
+          return g;
+        })
+      );
+    }, []);
   const [title, setTitle] = useState("");
   const [type, setType] = useState("daily");
   const { goals, setGoals } = useAppContext();
@@ -32,9 +54,12 @@ const handleSubmit = (e) => {
         {
           id: Date.now(),
           title,
-          type, // daily | monthly | yearly
+          type,
           target: Number(target),
           progress: 0,
+          completed: false,
+          streak: 0,
+          lastDoneAt: null,
           createdAt: new Date(),
         },
       ]);
@@ -149,6 +174,17 @@ const handleSubmit = (e) => {
                       <p className="font-medium text-gray-800">
                         {goal.title}
                       </p>
+                      {goal.completed && (
+                        <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full">
+                          Completed ✓
+                        </span>
+                      )}
+                      {goal.streak > 0 && (
+                        <p className="text-xs text-orange-600">
+                          🔥 Streak: {goal.streak}
+                        </p>
+                      )}
+
                       <p className="text-xs text-gray-500 capitalize">
                         {goal.type} • {goal.progress} / {goal.target}
                       </p>
@@ -194,9 +230,10 @@ const handleSubmit = (e) => {
                   {/* Progress controls */}
                   <div className="flex gap-2">
                     <button
+                      disabled={goal.completed}
                       onClick={() =>
                         setGoals(
-                          filteredGoals.map((g) =>
+                          goals.map((g) =>
                             g.id === goal.id
                               ? {
                                   ...g,
@@ -206,28 +243,60 @@ const handleSubmit = (e) => {
                           )
                         )
                       }
-                      className="px-2 py-1 text-xs bg-gray-200 rounded"
+                      className={`px-2 py-1 text-xs rounded ${
+                        goal.completed
+                          ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                          : "bg-gray-200"
+                      }`}
                     >
                       −
                     </button>
 
+
                     <button
+                      disabled={goal.completed}
                       onClick={() =>
                         setGoals(
-                          filteredGoals.map((g) =>
-                            g.id === goal.id
-                              ? {
-                                  ...g,
-                                  progress: Math.min(
-                                    g.progress + 1,
-                                    g.target
-                                  ),
-                                }
-                              : g
-                          )
+                          goals.map((g) => {
+                            if (g.id !== goal.id) return g;
+
+                            const newProgress = Math.min(g.progress + 1, g.target);
+                            const isCompleted = newProgress >= g.target;
+
+                            let newStreak = g.streak;
+
+                            if (isCompleted) {
+                              const today = new Date();
+                              const lastDone = g.lastDoneAt
+                                ? new Date(g.lastDoneAt)
+                                : null;
+
+                              if (
+                                lastDone &&
+                                today.toDateString() !== lastDone.toDateString() &&
+                                today - lastDone <= 24 * 60 * 60 * 1000
+                              ) {
+                                newStreak += 1;
+                              } else {
+                                newStreak = 1;
+                              }
+                            }
+
+                            return {
+                              ...g,
+                              progress: newProgress,
+                              completed: isCompleted,          // ✅ THIS LINE WAS MISSING
+                              streak: newStreak,
+                              lastDoneAt: isCompleted ? new Date() : g.lastDoneAt,
+                            };
+                          })
                         )
                       }
-                      className="px-2 py-1 text-xs bg-blue-600 text-white rounded"
+                      className={`px-2 py-1 text-xs rounded ${
+                        goal.completed
+                          ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                          : "bg-blue-600 text-white"
+                      }`}
                     >
                       +
                     </button>

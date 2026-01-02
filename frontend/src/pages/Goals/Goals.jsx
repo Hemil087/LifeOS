@@ -9,6 +9,7 @@ export default function Goals() {
   const { goals, setGoals } = useAppContext();
   const [editingId, setEditingId] = useState(null);
   const [target, setTarget] = useState("");
+  const [filter, setFilter] = useState("all");
 
 
 const handleSubmit = (e) => {
@@ -31,9 +32,10 @@ const handleSubmit = (e) => {
         {
           id: Date.now(),
           title,
-          type,
+          type, // daily | monthly | yearly
           target: Number(target),
           progress: 0,
+          createdAt: new Date(),
         },
       ]);
     }
@@ -42,6 +44,10 @@ const handleSubmit = (e) => {
     setTarget("");
     setType("daily");
   };
+  const filteredGoals =
+  filter === "all"
+    ? goals
+    : goals.filter((g) => g.type === filter);
 
   return (
     <div className="min-h-screen bg-gray-100 p-4 pb-20">
@@ -109,7 +115,22 @@ const handleSubmit = (e) => {
             </button>
           </form>
         </Card>
-
+        {/* Filter */}
+        <div className="flex gap-2">
+          {["all", "daily", "monthly", "yearly"].map((f) => (
+            <button
+              key={f}
+              onClick={() => setFilter(f)}
+              className={`px-3 py-1 text-xs rounded-full ${
+                filter === f
+                  ? "bg-blue-600 text-white"
+                  : "bg-gray-200 text-gray-600"
+              }`}
+            >
+              {f.charAt(0).toUpperCase() + f.slice(1)}
+            </button>
+          ))}
+        </div>
         {/* Goals List */}
         <Card title="Your Goals">
           {goals.length === 0 ? (
@@ -118,7 +139,7 @@ const handleSubmit = (e) => {
             </p>
           ) : (
             <ul className="space-y-2">
-              {goals.map((goal) => (
+              {filteredGoals.map((goal) => (
                 <li
                   key={goal.id}
                   className="bg-gray-50 p-3 rounded-lg space-y-2"
@@ -175,7 +196,7 @@ const handleSubmit = (e) => {
                     <button
                       onClick={() =>
                         setGoals(
-                          goals.map((g) =>
+                          filteredGoals.map((g) =>
                             g.id === goal.id
                               ? {
                                   ...g,
@@ -193,7 +214,7 @@ const handleSubmit = (e) => {
                     <button
                       onClick={() =>
                         setGoals(
-                          goals.map((g) =>
+                          filteredGoals.map((g) =>
                             g.id === goal.id
                               ? {
                                   ...g,

@@ -9,42 +9,63 @@ export default function Expenses() {
   const [category, setCategory] = useState("food");
   const { expenses, setExpenses } = useAppContext();
   const [editingId, setEditingId] = useState(null);
+  const [filter, setFilter] = useState("month");
 
-const handleSubmit = (e) => {
-  e.preventDefault();
+  const handleSubmit = (e) => {
+    e.preventDefault();
 
-  if (!title.trim() || !amount) return;
+    if (!title.trim() || !amount) return;
 
-  if (editingId) {
-    setExpenses(
-      expenses.map((expense) =>
-        expense.id === editingId
-          ? {
-              ...expense,
-              title,
-              amount: Number(amount),
-              category,
-            }
-          : expense
-      )
-    );
-    setEditingId(null);
-  } else {
-    setExpenses([
-      ...expenses,
-      {
-        id: Date.now(),
-        title,
-        amount: Number(amount),
-        category,
-      },
-    ]);
-  }
+    if (editingId) {
+      setExpenses(
+        expenses.map((expense) =>
+          expense.id === editingId
+            ? {
+                ...expense,
+                title,
+                amount: Number(amount),
+                category,
+              }
+            : expense
+        )
+      );
+      setEditingId(null);
+    } else {
+      setExpenses([
+        ...expenses,
+        {
+          id: Date.now(),
+          title,
+          amount: Number(amount),
+          category,
+          date: new Date(),
+        },
+      ]);
+    }
+    setTitle("");
+    setAmount("");
+    setCategory("food");
+  };
+  const now = new Date();
 
-  setTitle("");
-  setAmount("");
-  setCategory("food");
-};
+  const filteredExpenses = expenses.filter((expense) => {
+    const expenseDate = new Date(expense.date);
+
+    if (filter === "today") {
+      return (
+        expenseDate.toDateString() === now.toDateString()
+      );
+    }
+
+    if (filter === "month") {
+      return (
+        expenseDate.getMonth() === now.getMonth() &&
+        expenseDate.getFullYear() === now.getFullYear()
+      );
+    }
+
+    return true;
+  });
 
   return (
     <div className="min-h-screen bg-gray-100 p-4 pb-20">
@@ -116,6 +137,23 @@ const handleSubmit = (e) => {
             </button>
           </form>
         </Card>
+        
+        {/* Filter  */}
+        <div className="flex gap-2">
+          {["today", "month", "all"].map((f) => (
+            <button
+              key={f}
+              onClick={() => setFilter(f)}
+              className={`px-3 py-1 text-xs rounded-full ${
+                filter === f
+                  ? "bg-blue-600 text-white"
+                  : "bg-gray-200 text-gray-600"
+              }`}
+            >
+              {f === "month" ? "This Month" : f.charAt(0).toUpperCase() + f.slice(1)}
+            </button>
+          ))}
+        </div>
 
         {/* Expense List */}
         <Card title="Expense History">
@@ -125,7 +163,7 @@ const handleSubmit = (e) => {
             </p>
           ) : (
             <ul className="space-y-2">
-              {expenses.map((expense) => (
+              {filteredExpenses.map((expense) => (
                 <li
                   key={expense.id}
                   className="flex justify-between items-center bg-gray-50 p-2 rounded-lg text-sm"

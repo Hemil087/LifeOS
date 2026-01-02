@@ -1,6 +1,26 @@
 import Card from "../../components/Card";
+import { useAppContext } from "../../context/AppContext";
+import {PieChart, Pie,  Cell,  ResponsiveContainer, Tooltip,} from "recharts";
 
 export default function Dashboard() {
+  const { goals, expenses } = useAppContext();
+
+  const totalExpenses = expenses.reduce(
+    (sum, e) => sum + e.amount,
+    0
+  );
+  const expenseByCategory = expenses.reduce((acc, expense) => {
+    acc[expense.category] =(acc[expense.category] || 0) + expense.amount;
+    return acc;
+  }, {});
+
+  const chartData = Object.entries(expenseByCategory).map(
+    ([category, amount]) => ({
+      category,
+      amount,
+    })
+  );
+
   return (
     <div className="min-h-screen bg-gray-100 p-4 pb-20">
       <div className="max-w-7xl mx-auto space-y-6">
@@ -17,10 +37,46 @@ export default function Dashboard() {
 
         {/* Summary Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <Card title="Today’s Goals" value="3 / 5" />
-          <Card title="Today’s Expenses" value="₹450" />
-          <Card title="Monthly Savings" value="₹12,000" />
+          <Card title="Total Goals" value={goals.length} />
+          <Card title="Total Expenses" value={`₹${totalExpenses}`} />
+          <Card title="Active Goals" value={goals.length} />
+          <Card title="Expense Breakdown">
+            {chartData.length === 0 ? (
+              <p className="text-sm text-gray-500">
+                No expenses yet.
+              </p>
+            ) : (
+              <div className="h-64">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={chartData}
+                      dataKey="amount"
+                      nameKey="category"
+                      outerRadius={80}
+                      label
+                    >
+                      {chartData.map((_, index) => (
+                        <Cell
+                          key={index}
+                          fill={[
+                            "#2563eb",
+                            "#16a34a",
+                            "#f59e0b",
+                            "#ef4444",
+                            "#6366f1",
+                          ][index % 5]}
+                        />
+                      ))}
+                    </Pie>
+                    <Tooltip />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
+            )}
+          </Card>
         </div>
+
 
         {/* Progress Section */}
         <Card title="Daily Goal Progress">

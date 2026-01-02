@@ -1,11 +1,13 @@
 import { useState } from "react";
 import Card from "../../components/Card";
+import { useAppContext } from "../../context/AppContext";
+
 
 export default function Expenses() {
   const [title, setTitle] = useState("");
   const [amount, setAmount] = useState("");
   const [category, setCategory] = useState("food");
-  const [expenses, setExpenses] = useState([]);
+  const { expenses, setExpenses } = useAppContext();
   const [editingId, setEditingId] = useState(null);
 
 const handleSubmit = (e) => {

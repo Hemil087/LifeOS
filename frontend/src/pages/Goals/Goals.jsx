@@ -1,10 +1,12 @@
 import { useState } from "react";
 import Card from "../../components/Card";
+import { useAppContext } from "../../context/AppContext";
+
 
 export default function Goals() {
   const [title, setTitle] = useState("");
   const [type, setType] = useState("daily");
-  const [goals, setGoals] = useState([]);
+  const { goals, setGoals } = useAppContext();
   const [editingId, setEditingId] = useState(null);
 
 

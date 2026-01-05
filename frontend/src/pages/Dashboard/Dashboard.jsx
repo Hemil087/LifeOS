@@ -1,9 +1,11 @@
 import Card from "../../components/Card";
 import { useAppContext } from "../../context/AppContext";
 import {PieChart, Pie,  Cell,  ResponsiveContainer, Tooltip,} from "recharts";
+import { useNavigate } from "react-router-dom";
 
 export default function Dashboard() {
   const { goals, expenses } = useAppContext();
+  const navigate = useNavigate();
 
   const totalExpenses = expenses.reduce(
     (sum, e) => sum + e.amount,
@@ -26,13 +28,30 @@ export default function Dashboard() {
       <div className="max-w-7xl mx-auto space-y-6">
 
         {/* Header */}
-        <div>
+        {/* <div>
           <h1 className="text-xl font-semibold text-gray-800">
             Good Morning 👋
           </h1>
           <p className="text-sm text-gray-500">
             Here’s a quick look at your day
           </p>
+        </div> */}
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-xl font-semibold text-gray-800">
+              Good Morning 👋
+            </h1>
+            <p className="text-sm text-gray-500">
+              Here’s a quick look at your day
+            </p>
+          </div>
+
+          <button
+            onClick={() => navigate("/logout")}
+            className="text-sm text-red-500 hover:text-red-600 font-medium"
+          >
+            Logout
+          </button>
         </div>
 
         {/* Summary Cards */}

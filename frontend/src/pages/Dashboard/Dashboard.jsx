@@ -2,6 +2,7 @@ import Card from "../../components/Card";
 import { useAppContext } from "../../context/AppContext";
 import {PieChart, Pie,  Cell,  ResponsiveContainer, Tooltip,} from "recharts";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
 
 export default function Dashboard() {
   const { goals, expenses } = useAppContext();
@@ -22,25 +23,20 @@ export default function Dashboard() {
       amount,
     })
   );
+  const { user } = useAuth();
+
 
   return (
     <div className="min-h-screen bg-gray-100 p-4 pb-20">
       <div className="max-w-7xl mx-auto space-y-6">
 
         {/* Header */}
-        {/* <div>
-          <h1 className="text-xl font-semibold text-gray-800">
-            Good Morning 👋
-          </h1>
-          <p className="text-sm text-gray-500">
-            Here’s a quick look at your day
-          </p>
-        </div> */}
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-xl font-semibold text-gray-800">
-              Good Morning 👋
+              Good Morning{user?.username ? `, ${user.username}` : ""} 👋
             </h1>
+
             <p className="text-sm text-gray-500">
               Here’s a quick look at your day
             </p>

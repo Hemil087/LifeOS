@@ -1,20 +1,29 @@
 import { createContext, useContext, useEffect, useState } from "react";
+import { API_ENDPOINTS } from "../api";
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
   const [token, setToken] = useState(
     localStorage.getItem("accessToken")
   );
+  const [user, setUser] = useState(null);
 
-  // Load user from token (basic version)
+  // Fetch user info when token exists
   useEffect(() => {
-    if (token) {
-      setUser({ authenticated: true });
-    } else {
+    if (!token) {
       setUser(null);
+      return;
     }
+
+    fetch(API_ENDPOINTS.ME, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => setUser(data))
+      .catch(() => setUser(null));
   }, [token]);
 
   const login = (accessToken) => {
@@ -29,7 +38,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, token, login, logout }}>
+    <AuthContext.Provider value={{ token, user, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

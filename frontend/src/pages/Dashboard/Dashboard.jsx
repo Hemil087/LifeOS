@@ -27,14 +27,14 @@ export default function Dashboard() {
 
 
   return (
-    <div className="min-h-screen bg-gray-100 p-4 pb-20">
+    <div className="min-h-screen bg-gray-100 p-4 pb-20 animate-fade-in">
       <div className="max-w-7xl mx-auto space-y-6">
 
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-xl font-semibold text-gray-800">
-              Good Morning{user?.username ? `, ${user.username}` : ""} 👋
+              Hello{user?.username ? `, ${user.username}` : ""} 👋
             </h1>
 
             <p className="text-sm text-gray-500">
@@ -44,7 +44,7 @@ export default function Dashboard() {
 
           <button
             onClick={() => navigate("/logout")}
-            className="text-sm text-red-500 hover:text-red-600 font-medium"
+            className="text-sm text-red-500 font-medium transition-colors duration-200 hover:text-red-600 hover:scale-105"
           >
             Logout
           </button>

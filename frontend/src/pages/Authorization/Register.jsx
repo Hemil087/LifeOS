@@ -34,12 +34,12 @@ export default function Login() {
             Welcome to LifeOS 👋
           </h1>
           <p className="text-sm text-gray-500">
-            Sign in to manage your goals & expenses
+            Register to manage your goals & expenses
           </p>
         </div>
 
         {/* Login Card */}
-        <Card title="Login">
+        <Card title="Register">
           <form onSubmit={handleSubmit} className="space-y-4">
 
             <div>

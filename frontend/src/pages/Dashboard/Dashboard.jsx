@@ -1,19 +1,46 @@
 import Card from "../../components/Card";
 import { useAppContext } from "../../context/AppContext";
-import {PieChart, Pie,  Cell,  ResponsiveContainer, Tooltip,} from "recharts";
+import {
+  PieChart,
+  Pie,
+  Cell,
+  ResponsiveContainer,
+  Tooltip,
+} from "recharts";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 
 export default function Dashboard() {
-  const { goals, expenses } = useAppContext();
+  const {
+    goals = [],
+    expenses = [],
+    loadingGoals,
+    loadingExpenses,
+  } = useAppContext();
+
+  const { user } = useAuth();
   const navigate = useNavigate();
 
+  /* -------------------- LOADING STATE -------------------- */
+  if (loadingGoals || loadingExpenses) {
+    return (
+      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+        <p className="text-sm text-gray-500 animate-pulse">
+          Loading your dashboard…
+        </p>
+      </div>
+    );
+  }
+
+  /* -------------------- DERIVED DATA -------------------- */
   const totalExpenses = expenses.reduce(
-    (sum, e) => sum + e.amount,
+    (sum, e) => sum + Number(e.amount),
     0
   );
+
   const expenseByCategory = expenses.reduce((acc, expense) => {
-    acc[expense.category] =(acc[expense.category] || 0) + expense.amount;
+    acc[expense.category] =
+      (acc[expense.category] || 0) + Number(expense.amount);
     return acc;
   }, {});
 
@@ -23,9 +50,22 @@ export default function Dashboard() {
       amount,
     })
   );
-  const { user } = useAuth();
 
+  const activeGoals = goals.filter((g) => !g.completed);
 
+  /* -------------------- DAILY GOAL PROGRESS -------------------- */
+  const dailyGoals = goals.filter((g) => g.type === "daily");
+
+  const dailyCompleted = dailyGoals.filter(
+    (g) => g.completed
+  ).length;
+
+  const dailyProgressPercent =
+    dailyGoals.length === 0
+      ? 0
+      : Math.round((dailyCompleted / dailyGoals.length) * 100);
+
+  /* -------------------- UI -------------------- */
   return (
     <div className="min-h-screen bg-gray-100 p-4 pb-20 animate-fade-in">
       <div className="max-w-7xl mx-auto space-y-6">
@@ -36,7 +76,6 @@ export default function Dashboard() {
             <h1 className="text-xl font-semibold text-gray-800">
               Hello{user?.username ? `, ${user.username}` : ""} 👋
             </h1>
-
             <p className="text-sm text-gray-500">
               Here’s a quick look at your day
             </p>
@@ -44,7 +83,7 @@ export default function Dashboard() {
 
           <button
             onClick={() => navigate("/logout")}
-            className="text-sm text-red-500 font-medium transition-colors duration-200 hover:text-red-600 hover:scale-105"
+            className="text-sm text-red-500 font-medium hover:text-red-600 transition"
           >
             Logout
           </button>
@@ -53,8 +92,9 @@ export default function Dashboard() {
         {/* Summary Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <Card title="Total Goals" value={goals.length} />
+          <Card title="Active Goals" value={activeGoals.length} />
           <Card title="Total Expenses" value={`₹${totalExpenses}`} />
-          <Card title="Active Goals" value={goals.length} />
+
           <Card title="Expense Breakdown">
             {chartData.length === 0 ? (
               <p className="text-sm text-gray-500">
@@ -92,18 +132,25 @@ export default function Dashboard() {
           </Card>
         </div>
 
-
-        {/* Progress Section */}
+        {/* Daily Goal Progress */}
         <Card title="Daily Goal Progress">
-          <div className="h-2 bg-gray-200 rounded-full">
-            <div
-              className="h-2 bg-blue-600 rounded-full"
-              style={{ width: "60%" }}
-            />
-          </div>
-          <p className="text-xs text-gray-500 mt-2">
-            60% completed
-          </p>
+          {dailyGoals.length === 0 ? (
+            <p className="text-sm text-gray-500">
+              No daily goals yet.
+            </p>
+          ) : (
+            <>
+              <div className="h-2 bg-gray-200 rounded-full">
+                <div
+                  className="h-2 bg-blue-600 rounded-full transition-all duration-500"
+                  style={{ width: `${dailyProgressPercent}%` }}
+                />
+              </div>
+              <p className="text-xs text-gray-500 mt-2">
+                {dailyProgressPercent}% completed
+              </p>
+            </>
+          )}
         </Card>
 
       </div>

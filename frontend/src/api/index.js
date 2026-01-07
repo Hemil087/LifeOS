@@ -5,6 +5,9 @@ export const API_ENDPOINTS = {
   REGISTER: `${BASE_URL}/api/auth/register/`,
   REFRESH: `${BASE_URL}/api/auth/refresh/`,
   ME: `${BASE_URL}/api/auth/me/`,
+  GOALS: `${BASE_URL}/api/goals/`,
+  EXPENSES: `${BASE_URL}/api/expenses/`,
+
 };
 
 export default BASE_URL;

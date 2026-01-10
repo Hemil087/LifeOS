@@ -14,25 +14,26 @@ export default defineConfig({
       },
       includeAssets: ["favicon.svg", "robots.txt"],
       manifest: {
-        name: "Finance Tracker",
-        short_name: "Finance",
-        description: "Track goals and expenses easily",
-        theme_color: "#6366f1",
-        background_color: "#ffffff",
-        display: "standalone",
-        start_url: "/",
-        icons: [
-          {
-            src: "/icons/icon-192.png",
-            sizes: "192x192",
-            type: "image/png",
-          },
-          {
-            src: "/icons/icon-512.png",
-            sizes: "512x512",
-            type: "image/png",
-          },
-        ],
+          "name": "LifeOS",
+          "short_name": "LifeOS",
+          "description": "Manage goals and expenses with LifeOS",
+          "start_url": "/",
+          "display": "standalone",
+          "background_color": "#ffffff",
+          "theme_color": "#2563eb",
+          "orientation": "portrait",
+          "icons": [
+            {
+              "src": "/icons/icon-192.png",
+              "sizes": "192x192",
+              "type": "image/png"
+            },
+            {
+              "src": "/icons/icon-512.png",
+              "sizes": "512x512",
+              "type": "image/png"
+            }
+          ]
       },
     }),
   ],

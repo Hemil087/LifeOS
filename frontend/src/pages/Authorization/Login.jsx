@@ -4,23 +4,27 @@ import { useAuth } from "../../context/AuthContext";
 import { loginUser } from "../../api/auth";
 import { useNavigate } from "react-router-dom";
 
-
 export default function Login() {
   const { login } = useAuth();
+  const navigate = useNavigate();
+
   const [form, setForm] = useState({ username: "", password: "" });
   const [error, setError] = useState("");
-    const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    setLoading(true);
 
     try {
-      const data = await loginUser(form); // ✅ FIXED
+      const data = await loginUser(form);
       login(data.access);
-      navigate("/");                  // redirect after login
+      navigate("/");
     } catch {
       setError("Invalid username or password");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -49,6 +53,7 @@ export default function Login() {
                 onChange={(e) =>
                   setForm({ ...form, username: e.target.value })
                 }
+                required
               />
             </div>
 
@@ -62,6 +67,7 @@ export default function Login() {
                 onChange={(e) =>
                   setForm({ ...form, password: e.target.value })
                 }
+                required
               />
             </div>
 
@@ -71,23 +77,26 @@ export default function Login() {
 
             <button
               type="submit"
-              className="w-full bg-blue-600 text-white py-2 rounded-md text-sm font-medium hover:bg-blue-700 transition"
+              disabled={loading}
+              className="w-full bg-blue-600 text-white py-2 rounded-md text-sm font-medium hover:bg-blue-700 transition disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
-              Login In
+              {loading && (
+                <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              )}
+              {loading ? "Signing in..." : "Login"}
             </button>
           </form>
         </Card>
 
         <p className="text-center text-xs text-gray-500">
-            New to LifeOS?{" "}
-            <span
-                className="text-blue-600 cursor-pointer hover:underline"
-                onClick={() => navigate("/register")}
-            >
-                Create an account
-            </span>
+          New to LifeOS?{" "}
+          <span
+            className="text-blue-600 cursor-pointer hover:underline"
+            onClick={() => navigate("/register")}
+          >
+            Create an account
+          </span>
         </p>
-
 
       </div>
     </div>

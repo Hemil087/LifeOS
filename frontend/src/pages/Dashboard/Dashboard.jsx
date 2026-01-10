@@ -1,4 +1,5 @@
 import Card from "../../components/Card";
+import FullPageLoader from "../../components/FullPageLoader";
 import { useAppContext } from "../../context/AppContext";
 import {
   PieChart,
@@ -24,11 +25,7 @@ export default function Dashboard() {
   /* -------------------- LOADING STATE -------------------- */
   if (loadingGoals || loadingExpenses) {
     return (
-      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-        <p className="text-sm text-gray-500 animate-pulse">
-          Loading your dashboard…
-        </p>
-      </div>
+      <FullPageLoader text="Loading your dashboard…" />
     );
   }
 
